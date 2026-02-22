@@ -2,7 +2,7 @@
 
   Copyright (c) 2015, 2016 Hubert Denkmair <hubert@denkmair.de>
 
-  This file is part of cangaroo.
+  This file is part of CANgaroo.
 
   cangaroo is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -57,17 +57,14 @@ public:
     virtual bool saveXML(Backend &backend, QDomDocument &xml, QDomElement &root);
     virtual bool loadXML(Backend &backend, QDomElement &el);
 
-    UnifiedTraceViewModel *linearModel() const { return _unifiedTraceViewModel; }
-    AggregatedTraceViewModel* aggregatedModel() const{return _aggregatedTraceViewModel;}
-
 protected:
     void retranslateUi() override;
 
 public slots:
     void addMessage(const CanMessage &msg);
-    void rowsInserted(const QModelIndex & parent, int first, int last);
 
 private slots:
+    void onRowsInserted(const QModelIndex & parent, int first, int last);
 
     void on_cbTimestampMode_currentIndexChanged(int index);
     void on_cbFilterChanged(void);
@@ -81,9 +78,16 @@ private:
     mode_t _mode;
     timestamp_mode_t _timestampMode;
 
-    TraceFilterModel * _aggFilteredModel;
-    TraceFilterModel * _uniFilteredModel;
+    enum Category {
+        Cat_Aggregated = 0,
+        Cat_UDS = 1,
+        Cat_J1939 = 2,
+        Cat_Count = 3
+    };
+
+    TraceFilterModel * _filterModels[Cat_Count];
+    UnifiedTraceViewModel *_viewModels[Cat_Count];
     AggregatedTraceViewModel *_aggregatedTraceViewModel;
-    UnifiedTraceViewModel *_unifiedTraceViewModel;
     QSortFilterProxyModel *_aggregatedProxyModel;
+    TraceFilterModel * _aggMonitorFilterModel; // Existing aggregated monitor mode
 };

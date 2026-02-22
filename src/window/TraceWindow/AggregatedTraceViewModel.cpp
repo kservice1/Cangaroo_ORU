@@ -21,6 +21,7 @@
 
 #include "AggregatedTraceViewModel.h"
 #include <QColor>
+#include <core/ThemeManager.h>
 
 #include <core/Backend.h>
 #include <core/CanTrace.h>
@@ -106,13 +107,13 @@ void AggregatedTraceViewModel::beforeAppend(int num_messages)
     CanTrace *trace = backend()->getTrace();
     int start_id = trace->size();
 
-    for (int i = start_id; i < (start_id + num_messages); i++) {
-        const CanMessage *msg = trace->getMessage(i);
-        unique_key_t key = makeUniqueKey(*msg);
+    for (int i=start_id; i<start_id + num_messages; i++) {
+        CanMessage msg = trace->getMessage(i);
+        unique_key_t key = makeUniqueKey(msg);
         if (_map.contains(key) || _pendingMessageInserts.contains(key)) {
-            _pendingMessageUpdates.append(*msg);
+            _pendingMessageUpdates.append(msg);
         } else {
-            _pendingMessageInserts[key] = *msg;
+            _pendingMessageInserts[key] = msg;
         }
     }
 
@@ -215,7 +216,7 @@ QVariant AggregatedTraceViewModel::data_TextColorRole(const QModelIndex &index, 
     if (!item) { return QVariant(); }
 
     if (item->parent() == _rootItem) { // CanMessage row
-        return QColor(Qt::black);
+        return ThemeManager::instance().colors().text;
     } else { // CanSignal Row
         return data_TextColorRole_Signal(index, role, item->parent()->_lastmsg);
     }

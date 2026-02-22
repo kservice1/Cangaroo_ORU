@@ -280,11 +280,11 @@
       <layout class="QVBoxLayout" name="verticalLayoutActive">
        <item>
         <widget class="QTreeWidget" name="treeActive">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
          </property>
          <column>
           <property name="text">
@@ -395,7 +395,7 @@
          <item>
           <widget class="QPushButton" name="btnSelectAll">
            <property name="text">
-            <string>Select All</string>
+            <string>Select All Rows</string>
            </property>
           </widget>
          </item>

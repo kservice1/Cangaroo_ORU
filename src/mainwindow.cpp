@@ -27,13 +27,18 @@
 #include <QSignalMapper>
 #include <QCloseEvent>
 #include <QTimer>
+#include <QLabel>
+#include <QDockWidget>
+#include <QStatusBar>
 #include <QDomDocument>
 #include <QPalette>
 #include <QActionGroup>
 #include <QEvent>
 
-#include <core/MeasurementSetup.h>
-#include <core/CanTrace.h>
+#include "core/MeasurementSetup.h"
+#include "core/Backend.h"
+#include "core/CanTrace.h"
+#include "core/ThemeManager.h"
 #include <window/TraceWindow/TraceWindow.h>
 #include <window/SetupDialog/SetupDialog.h>
 #include <window/LogWindow/LogWindow.h>
@@ -225,6 +230,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
             qDebug() << "Loaded saved style:" << savedStyle;
         }
     }
+
+    // Default to Light
+    //setTheme("light");
 }
 
 MainWindow::~MainWindow()

@@ -11,7 +11,7 @@ TEMPLATE = app
 CONFIG += warn_on
 CONFIG += link_pkgconfig
 
-VERSION = 0.4.1
+VERSION = 0.4.2
 DEFINES += VERSION_STRING=\\\"$${VERSION}\\\"
 
 TRANSLATIONS = \
