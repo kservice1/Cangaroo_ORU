@@ -21,6 +21,7 @@
 
 #include "TraceWindow.h"
 #include "ui_TraceWindow.h"
+#include <window/ConditionalLoggingDialog.h>
 
 #include <QDomDocument>
 #include <QSortFilterProxyModel>
@@ -28,6 +29,7 @@
 #include "AggregatedTraceViewModel.h"
 #include "UnifiedTraceViewModel.h"
 #include "TraceFilterModel.h"
+#include <QScrollBar>
 #include <core/Backend.h>
 
 
@@ -43,7 +45,7 @@ TraceWindow::TraceWindow(QWidget *parent, Backend &backend) :
     _aggregatedTraceViewModel = new AggregatedTraceViewModel(backend);
     _aggregatedProxyModel = new QSortFilterProxyModel(this);
     _aggregatedProxyModel->setSourceModel(_aggregatedTraceViewModel);
-    _aggregatedProxyModel->setDynamicSortFilter(true);
+    _aggregatedProxyModel->setDynamicSortFilter(false);
 
     _aggMonitorFilterModel = new TraceFilterModel(this);
     _aggMonitorFilterModel->setSourceModel(_aggregatedProxyModel);
@@ -229,7 +231,13 @@ void TraceWindow::onRowsInserted(const QModelIndex &parent, int first, int last)
     // Find which tree corresponds to this filter model and scroll it
     for (int i = 0; i < Cat_Count; ++i) {
         if (_filterModels[i] == filterModel || (i == 0 && _aggMonitorFilterModel == filterModel)) {
-            trees[i]->scrollToBottom();
+            QTreeView* tree = trees[i];
+            QScrollBar *vbar = tree->verticalScrollBar();
+            bool atBottom = (vbar->value() >= vbar->maximum() - 10); // buffer of 10 pixels
+            
+            if (atBottom || vbar->maximum() == 0) {
+                tree->scrollToBottom();
+            }
             break;
         }
     }
@@ -271,3 +279,4 @@ void TraceWindow::on_cbViewMode_currentIndexChanged(int index)
 {
     setMode((mode_t)ui->cbViewMode->itemData(index).toInt());
 }
+

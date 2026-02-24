@@ -46,6 +46,8 @@ public:
         column_tx_frames,
         column_tx_errors,
         column_tx_dropped,
+        column_bus_load,
+        column_bits,
         column_num_warning,
         column_num_passive,
         column_num_busoff,
@@ -72,6 +74,12 @@ private:
 
     Backend &backend();
     QTimer *_timer;
+
+    struct InterfaceStats {
+        uint64_t lastBits;
+        qint64 lastTime;
+    };
+    QMap<void*, InterfaceStats> _lastStats;
 
     virtual QSize sizeHint() const override;
 };

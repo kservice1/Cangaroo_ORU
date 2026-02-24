@@ -23,6 +23,7 @@
 
 #include <QString>
 #include <stdint.h>
+#include <atomic>
 #include "CanDriver.h"
 #include "CanTiming.h"
 #include <QObject>
@@ -78,7 +79,7 @@ public:
     virtual bool readMessage(QList<CanMessage> &msglist, unsigned int timeout_ms) = 0;
 
     virtual bool updateStatistics();
-    virtual void resetStatistics() {}
+    virtual void resetStatistics() { _totalBits = 0; }
     virtual uint32_t getState() = 0;
     virtual int getNumRxFrames() = 0;
     virtual int getNumRxErrors() = 0;
@@ -86,6 +87,8 @@ public:
     virtual int getNumTxErrors() = 0;
     virtual int getNumRxOverruns() = 0;
     virtual int getNumTxDropped() = 0;
+    virtual uint64_t getNumBits();
+    void addFrameBits(const CanMessage &msg);
 
     virtual QString getVersion();
 
@@ -97,4 +100,5 @@ public:
 private:
     CanInterfaceId _id;
     CanDriver *_driver;
+    std::atomic<uint64_t> _totalBits;
 };

@@ -11,7 +11,7 @@ TEMPLATE = app
 CONFIG += warn_on
 CONFIG += link_pkgconfig
 
-VERSION = 0.4.2
+VERSION = 0.4.3
 DEFINES += VERSION_STRING=\\\"$${VERSION}\\\"
 
 TRANSLATIONS = \
@@ -31,9 +31,11 @@ macx:OBJECTS_DIR = ../build/o/mac
 
 
 SOURCES += main.cpp\
-    mainwindow.cpp
+    mainwindow.cpp \
+    window/ConditionalLoggingDialog.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    window/ConditionalLoggingDialog.h
 
 FORMS    += mainwindow.ui
 
