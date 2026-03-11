@@ -294,7 +294,7 @@ void TxGeneratorWindow::on_btnSendOnce_released()
             if (intf && intf->isOpen()) {
                 cm.msg.setInterfaceId(cm.interfaceId);
                 intf->sendMessage(cm.msg);
-                if (ui->cbShowInTrace->isChecked()) {
+                if (ui->cbShowInTrace->isChecked() && intf->ShowTxMsg()) {
                     CanMessage loopback = cm.msg;
                     loopback.setRX(false);
                     struct timeval tv;
@@ -510,7 +510,7 @@ void TxGeneratorWindow::onSendTimerTimeout()
             if (intf && intf->isOpen()) {
                 cm.msg.setInterfaceId(cm.interfaceId);
                 intf->sendMessage(cm.msg);
-                if (ui->cbShowInTrace->isChecked()) {
+                if (ui->cbShowInTrace->isChecked() && intf->ShowTxMsg()) {
                     CanMessage loopback = cm.msg;
                     loopback.setRX(false);
                     struct timeval tv_loop;

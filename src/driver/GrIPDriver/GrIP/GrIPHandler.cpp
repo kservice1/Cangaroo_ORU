@@ -3,6 +3,7 @@
 //#include "Protocol.h"
 #include <chrono>
 #include <cstring>
+#include "qapplication.h"
 
 
 #define SYSTEM_REPORT_INFO      0u
@@ -77,7 +78,7 @@ GrIPHandler::GrIPHandler(const QString &name)
     m_SerialPort->setParity(QSerialPort::NoParity);
     m_SerialPort->setStopBits(QSerialPort::OneStop);
     m_SerialPort->setFlowControl(QSerialPort::NoFlowControl);
-    m_SerialPort->setReadBufferSize(2048);
+    m_SerialPort->setReadBufferSize(4096);
 
     GrIP_Init(*m_SerialPort);
 }
@@ -246,15 +247,6 @@ void GrIPHandler::EnableChannel(uint8_t ch, bool enable)
 
     GrIP_Pdu_t p = {reinterpret_cast<uint8_t*>(&status), sizeof(Protocol_ChannelStatus_t)};
 
-    if(ch == 0)
-    {
-        status.Channel1 = (uint8_t)enable;
-    }
-    else if(ch == 1)
-    {
-        status.Channel2 = (uint8_t)enable;
-    }
-
     if(ch < m_Channel_StatusCAN.size())
     {
         m_Channel_StatusCAN[ch] = enable;
@@ -360,6 +352,7 @@ bool GrIPHandler::CanTransmit(uint8_t ch, const CanMessage &msg)
     frame.ID = ID;
 
     frame.DLC = msg.getLength();
+    frame.ErrFlags = 0;
 
     frame.Flags = 0;
     if(msg.isExtended())
@@ -591,15 +584,15 @@ void GrIPHandler::WorkerThread()
     while(!m_Exit)
     {
         // Update GrIP
-        for(int i = 0; i < 32; i++)
+        for(int i = 0; i < 128; i++)
         {
             GrIP_Update();
         }
 
         // Check for new packet
-        for(int i = 0; i < 32; i++)
+        for(int i = 0; i < 16; i++)
         {
-            GrIP_Packet_t dat;
+            GrIP_Packet_t dat = {};
             if(GrIP_Receive(&dat))
             {
                 ProcessData(dat);

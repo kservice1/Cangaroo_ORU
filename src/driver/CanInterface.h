@@ -58,7 +58,7 @@ public:
 
 public:
     CanInterface(CanDriver *driver);
-	virtual ~CanInterface();
+    virtual ~CanInterface();
     virtual CanDriver *getDriver();
     virtual QString getName() const = 0;
     virtual QString getDetailsStr() const;
@@ -70,8 +70,8 @@ public:
     virtual uint32_t getCapabilities();
     virtual QList<CanTiming> getAvailableBitrates();
 
-	virtual void open();
-	virtual void close();
+    virtual void open();
+    virtual void close();
 
     virtual bool isOpen();
 
@@ -93,6 +93,7 @@ public:
     virtual QString getVersion();
 
     QString getStateText();
+    virtual bool ShowTxMsg() {return true;}
 
     CanInterfaceId getId() const;
     void setId(CanInterfaceId id);

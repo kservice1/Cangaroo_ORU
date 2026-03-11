@@ -228,6 +228,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         {
             QApplication::setStyle(QStyleFactory::create(savedStyle));
             qDebug() << "Loaded saved style:" << savedStyle;
+
+
+            if(isDarkMode())
+            {
+                qDebug() << "DarkMode";
+                ThemeManager::instance().applyTheme(ThemeManager::Dark);
+            }
         }
     }
 
@@ -238,9 +245,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     btnOpenGraph->setCursor(Qt::PointingHandCursor);
     ui->horizontalLayoutControls->insertWidget(3, btnOpenGraph); // Insert after Setup Interface button
     connect(btnOpenGraph, &QPushButton::clicked, this, &MainWindow::createStandaloneGraphWindow);
-
-    // Default to Light
-    //setTheme("light");
 }
 
 MainWindow::~MainWindow()
@@ -279,6 +283,19 @@ void MainWindow::closeEvent(QCloseEvent *event)
 bool MainWindow::isMaximizedWindow()
 {
     return settings.value("mainWindow/maximized").toBool();
+}
+
+bool MainWindow::isDarkMode()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    const auto scheme = QGuiApplication::styleHints()->colorScheme();
+    return scheme == Qt::ColorScheme::Dark;
+#else
+    const QPalette defaultPalette;
+    const auto text = defaultPalette.color(QPalette::WindowText);
+    const auto window = defaultPalette.color(QPalette::Window);
+    return text.lightness() > window.lightness();
+#endif // QT_VERSION
 }
 
 void MainWindow::updateMeasurementActions()
@@ -1208,6 +1225,11 @@ void MainWindow::showThemeDialog()
 
         // Save to settings
         settings.setValue("ui/applicationStyle", selectedStyle);
+
+        if(isDarkMode())
+        {
+            ThemeManager::instance().applyTheme(ThemeManager::Dark);
+        }
 
         QMessageBox::information(this,
                                  tr("Theme Changed"),

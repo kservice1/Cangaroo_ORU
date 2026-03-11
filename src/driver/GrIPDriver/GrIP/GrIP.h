@@ -15,12 +15,6 @@
 #define GRIP_BUFFER_SIZE        128u
 
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 typedef enum
 {
     PROT_GrIP = 0, PROT_BoOTA
@@ -158,10 +152,6 @@ void GrIP_GetError(GrIP_ErrorFlags_t *ef);
 bool GrIP_Receive(GrIP_Packet_t *p);
 
 int GrIP_GetLastResponse(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 
 #endif // GRIP_H_INCLUDED

@@ -113,8 +113,8 @@ GrIPInterface *GrIPDriver::createOrUpdateInterface(int index, GrIPHandler *hdl, 
         {
             scif->setName(name);
             return scif;
-		}
-	}
+        }
+    }
 
     GrIPInterface *scif = new GrIPInterface(this, index, hdl, name, fd_support, manufacturer);
     addInterface(scif);

@@ -123,6 +123,7 @@ public:
     virtual int getNumTxDropped();
 
     virtual QString getVersion();
+    virtual bool ShowTxMsg() {return false;}
 
     int getIfIndex();
 

@@ -379,10 +379,10 @@ QVariant UnifiedTraceViewModel::data_DisplayRole(const QModelIndex &index) const
             }
             case column_channel: return backend()->getInterfaceName(msg.getInterfaceId());
             case column_direction: return msg.isRX() ? "RX" : "TX";
-            case column_type: return msg.isFD() ? "fd" : "can";
+            case column_type: return QString(msg.isFD()? "FD.":"") + QString(msg.isExtended()? "EXT." : "STD.") + QString(msg.isRTR()?"RTR":"") + QString((msg.isBRS()?"BRS":""));
             case column_canid: return QString("0x%1").arg(msg.getId(), 0, 16);
             case column_dlc: return msg.getLength();
-            case column_data: return msg.getDataHexString().toLower();
+            case column_data: return msg.getDataHexString();
             case column_name: 
                 if (item->parentItem() != m_rootItem.get()) {
                     // This is a child row - show transport layer info

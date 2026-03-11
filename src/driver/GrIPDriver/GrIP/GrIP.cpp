@@ -69,11 +69,11 @@ void GrIP_Init(QSerialPort &serial)
 
     serPort = &serial;
 
-    memset(&TX_Header, 0u, GRIP_HEADER_SIZE);
-    memset(TX_Buffer, 0u, GRIP_BUFFER_SIZE + GRIP_HEADER_SIZE);
+    memset(&TX_Header, 0u, sizeof(TX_Header));
+    memset(TX_Buffer, 0u, GRIP_BUFFER_SIZE*2 + GRIP_HEADER_SIZE);
     memset(&RX_Buff, 0u, sizeof(RX_Buff));
     memset(&ErrorFlags, 0u, sizeof(GrIP_ErrorFlags_t));
-    memset(RxBuffer, 0u, sizeof(RxBuffer));
+    memset(RxBuffer, 0u, GRIP_BUFFER_SIZE);
 }
 
 
@@ -133,7 +133,7 @@ uint8_t GrIP_Transmit(GrIP_ProtocolType_e ProtType, GrIP_MessageType_e MsgType, 
         // Start of text
         TX_Buffer[idx++] = GRIP_SOT;
 
-        for(uint8_t i = 0; i < data->Length; i++)
+        for(uint8_t i = 0; i < data->Length && i < GRIP_BUFFER_SIZE; i++)
         {
             // Serialize data
             TX_Buffer[idx++] = nibble2hex(data->Data[i]>>4);
@@ -146,6 +146,7 @@ uint8_t GrIP_Transmit(GrIP_ProtocolType_e ProtType, GrIP_MessageType_e MsgType, 
         // Transmit packet
         int d = serPort->write((char*)TX_Buffer, idx);
         serPort->flush();
+        //serPort->waitForBytesWritten(5);
 
         return RET_OK;
     }
@@ -178,13 +179,14 @@ uint8_t GrIP_Transmit(GrIP_ProtocolType_e ProtType, GrIP_MessageType_e MsgType, 
         // Transmit packet
         int d = serPort->write((char*)TX_Buffer, idx);
         serPort->flush();
+        //serPort->waitForBytesWritten(5);
 
         return RET_OK;
     }
 
     // Clear memory
-    memset(&TX_Header, 0u, GRIP_HEADER_SIZE);
-    memset(TX_Buffer, 0u, GRIP_BUFFER_SIZE);
+    memset(&TX_Header, 0u, sizeof(TX_Header));
+    memset(TX_Buffer, 0u, GRIP_BUFFER_SIZE*2 + GRIP_HEADER_SIZE);
 
     return RET_NOK;
 }
@@ -198,8 +200,6 @@ uint8_t GrIP_SendSync(void)
 
 void GrIP_Update(void)
 {
-    serPort->waitForReadyRead(0);
-
     switch(GrIP_Status)
     {
     case GrIP_State_Idle:
@@ -216,7 +216,7 @@ void GrIP_Update(void)
                 // Received valid packet
                 GrIP_Status = GrIP_State_RX_Header;
                 ErrorFlags.LastError = 0u;
-                memset(&RX_Buff, 0u, sizeof(RX_Buff));
+                memset(RxBuffer, 0u, GRIP_BUFFER_SIZE);
             }
         }
         break;
@@ -306,7 +306,7 @@ void GrIP_Update(void)
                 GrIP_Status = GrIP_State_RX_Data;
                 MaxReadCount = MAX_READ_CNT;
                 BytesRead = 0u;
-                memset(RxBuffer, 0u, sizeof(RxBuffer));
+                memset(RxBuffer, 0u, GRIP_BUFFER_SIZE);
             }
             if(magic == GRIP_EOT || (isxdigit(magic) != 0u))
             {
@@ -352,9 +352,10 @@ void GrIP_Update(void)
 
             BytesRead++;
 
-            if(BytesRead >= RX_Buff.RX_Header.Length)
+            if(BytesRead >= RX_Buff.RX_Header.Length || BytesRead >= GRIP_BUFFER_SIZE)
             {
                 GrIP_Status = GrIP_State_Finish;
+                //qDebug() << "BytesRead: " << BytesRead;
 
                 // Check CRC
                 if(RX_Buff.RX_Header.CRC_Data == CRC_CalculateCRC8(RX_Buff.Data, RX_Buff.RX_Header.Length))
@@ -424,7 +425,8 @@ bool GrIP_Receive(GrIP_Packet_t *p)
 {
     if(q.size() > 0)
     {
-        memcpy(p, &q.front(), sizeof(GrIP_Packet_t));
+        auto tmp = q.front();
+        memcpy(p, &tmp, sizeof(GrIP_Packet_t));
         q.pop();
         return true;
     }
@@ -467,6 +469,11 @@ static uint8_t CheckHeader(const GrIP_PacketHeader_t *paket)
     {
         // Wrong version
         return RET_WRONG_VERSION;
+    }
+
+    if(paket->Length > GRIP_BUFFER_SIZE)
+    {
+        qDebug() << "Wrong Data Len";
     }
 
     if(paket->MsgType >= MSG_MAX_NUM)

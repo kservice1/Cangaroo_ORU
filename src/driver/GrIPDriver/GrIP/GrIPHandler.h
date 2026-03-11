@@ -22,7 +22,7 @@ typedef struct
 } SendPacket_t;
 
 
-class GrIPHandler
+class GrIPHandler: public QObject
 {
 public:
     GrIPHandler(const QString &name);

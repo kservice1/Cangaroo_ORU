@@ -106,7 +106,7 @@ QString GrIPInterface::getDetailsStr() const
 
 QString GrIPInterface::getName() const
 {
-	return _name;
+    return _name;
 }
 
 void GrIPInterface::setName(QString name)
@@ -497,13 +497,7 @@ void GrIPInterface::sendMessage(const CanMessage &msg)
 
     if(m_GrIPHandler->CanTransmit(_idx, msg))
     {
-        //_status.tx_count++;
-        //_status.can_state = state_tx_success;
 
-        if(msg.isShow())
-        {
-            //m_TxFrames.append(msg);
-        }
     }
     else
     {
@@ -529,13 +523,6 @@ bool GrIPInterface::readMessage(QList<CanMessage> &msglist, unsigned int timeout
     {
         return false;
     }
-
-    // Add TX frames to trace window
-    /*if(m_TxFrames.size())
-    {
-        msglist.append(m_TxFrames);
-        m_TxFrames.clear();
-    }*/
 
     // Read all RX frames
     while(m_GrIPHandler->CanAvailable(_idx))
@@ -592,12 +579,12 @@ bool GrIPInterface::readMessage(QList<CanMessage> &msglist, unsigned int timeout
     }
 
     // RX doesn't work on windows unless we call this for some reason
-    /*_rxbuf_mutex.lock();
-    if(_serport->waitForReadyRead(0))
+    //_rxbuf_mutex.lock();
+    /*if(_serport->waitForReadyRead(0))
     {
         qApp->processEvents();
-    }
-    _rxbuf_mutex.unlock();*/
+    }*/
+    //_rxbuf_mutex.unlock();
 
     return true;
 }

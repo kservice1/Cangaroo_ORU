@@ -236,8 +236,13 @@ QVariant AggregatedTraceViewModel::data_DisplayRole(const QModelIndex &index, in
 QVariant AggregatedTraceViewModel::data_TextColorRole(const QModelIndex &index, int role) const
 {
     (void) role;
+    bool isDark = ThemeManager::instance().isDarkMode();
+
     AggregatedTraceViewItem *item = (AggregatedTraceViewItem *)index.internalPointer();
     if (!item) { return QVariant(); }
+
+    const CanMessage& msg = item->_lastmsg;
+    if (msg.isErrorFrame()) return isDark ? QColor(255, 100, 100) : QColor(Qt::red);
 
     if (item->parent() == _rootItem) { // CanMessage row
         return ThemeManager::instance().colors().text;

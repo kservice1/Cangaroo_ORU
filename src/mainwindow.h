@@ -54,6 +54,7 @@ public:
     ~MainWindow();
 
     bool isMaximizedWindow();
+    bool isDarkMode();
 
 protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
