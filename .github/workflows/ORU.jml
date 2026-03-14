@@ -1,0 +1,27 @@
+name: ORU Workflow
+
+# Настройка события для ручного запуска
+on:
+  workflow_dispatch:
+    # Опционально: добавление входных данных (inputs)
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Run tests'
+        required: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World
+        run: echo "Запуск вручную с уровнем ${{ github.event.inputs.logLevel }}"
