@@ -21,7 +21,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build CANgaroo (Windows / MinGW / Qt6)
+    runs-on: windows-latest
     steps:
       - name: Hello World
         run: echo "Запуск вручную с уровнем ${{ github.event.inputs.logLevel }}"
