@@ -1,0 +1,23 @@
+name: Manual Self-Hosted Workflow
+
+# 1. Добавляет кнопку "Run workflow" в интерфейсе GitHub Actions
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # 2. Указывает использовать self-hosted runner
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run a one-line script
+        run: echo "Hello from my private server!"
+
+      - name: Run a multi-line script
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "User: $(whoami)"
+          echo "System info: $(uname -a)"
