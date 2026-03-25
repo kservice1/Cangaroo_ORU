@@ -1,4 +1,4 @@
-name: Build CANgaroo
+name: Build CANgaroo_ORU
 
 on:
   workflow_dispatch:
