@@ -1,4 +1,4 @@
-name: Build CANgaroo_ORU
+name: Build CANgaroo_ORU_25032026
 
 on:
   workflow_dispatch:
