@@ -4,22 +4,6 @@ on:
   workflow_dispatch:
   # pull_request:
 
-# Опционально: добавление входных данных (inputs)
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
-      tags:
-        description: 'Run tests'
-        required: false
-        type: boolean
-
 jobs:
   
   build-windows:
